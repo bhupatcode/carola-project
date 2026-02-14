@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Get Contacts</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <h2>Click to Get Contacts</h2>
+
+  <button onclick="getContacts()">Get Contacts</button>
+  <ul id="contacts"></ul>
+
+  <h2>Get QR to Open This Page</h2>
+  <button onclick="generateQR()">Generate QR Code</button>
+  <div id="qrcode"></div>
+
+  <script>
+    async function getContacts() {
+      if ('contacts' in navigator && 'select' in navigator.contacts) {
+        const props = ['name', 'tel'];
+        const opts = { multiple: true };
+        try {
+          const contacts = await navigator.contacts.select(props, opts);
+          const ul = document.getElementById('contacts');
+          contacts.forEach(contact => {
+            const li = document.createElement('li');
+            li.textContent = `${contact.name} - ${contact.tel}`;
+            ul.appendChild(li);
+          });
+        } catch (e) {
+          alert("Access denied or cancelled");
+        }
+      } else {
+        alert("Contact Picker not supported");
+      }
+    }
+
+    function generateQR() {
+      const pageUrl = window.location.href;
+
+      const qrDiv = document.getElementById("qrcode");
+      qrDiv.innerHTML = ""; // Clear old QR if any
+
+      new QRCode(qrDiv, {
+        text: pageUrl,
+        width: 200,
+        height: 200,
+      });
+    }
+  </script>
+</body>
+</html>
